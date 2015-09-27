@@ -8,8 +8,8 @@ import java.util.*;
 public class Minima {
 
     private static final double alpha = 0.5;
-    private int populationSize;
-    private final int giveUp = 40;
+    private static final int giveUpStart = 40;
+    private static final int giveUpInc = 5;
     private final boolean debug;
 
     public static void main(String[] args) {
@@ -22,7 +22,6 @@ public class Minima {
 
     public Minima(boolean debug) {
         this.debug = debug;
-        populationSize = 30;
     }
 
     private int N;
@@ -50,41 +49,40 @@ public class Minima {
         }
     }
 
-    private Point[] population;
-
     private void solve() {
         init();
-        populationSize = 3 * N + 4;
-        population = new Point[populationSize];
+        int populationSize = 2 * N + 4;
+        Point[] population = new Point[populationSize];
         Point[] nextPopulation = new Point[populationSize];
-        int iteration = 0;
-        do {
-            if (iteration % giveUp == 0) {
-                populate();
+        for (int giveUp = giveUpStart; tester.hasTries(); giveUp += giveUpInc) {
+            populate(population);
+            if (tester.debug) {
+                System.err.println("give up");
             }
-            ++iteration;
-            for (int i = 0; i < populationSize; ++i) {
-                int ia = randomNot(populationSize, i, -1, -1);
-                int ib = randomNot(populationSize, i, ia, -1);
-                int ic = randomNot(populationSize, i, ia, ib);
-                Point a = population[ia];
-                Point b = population[ib];
-                Point c = population[ic];
-                Point d = mutation(a, b, c);
-                Point Pi = population[i];
-                Point e = crossover(d, Pi);
-                double fi = Pi.getValue();
-                double fe = e.getValue();
-                if (fi < fe) {
-                    nextPopulation[i] = Pi;
-                } else {
-                    nextPopulation[i] = e;
+            for (int iteration = 0; iteration < giveUp; ++iteration) {
+                for (int i = 0; i < populationSize; ++i) {
+                    int ia = randomNot(populationSize, i, -1, -1);
+                    int ib = randomNot(populationSize, i, ia, -1);
+                    int ic = randomNot(populationSize, i, ia, ib);
+                    Point a = population[ia];
+                    Point b = population[ib];
+                    Point c = population[ic];
+                    Point d = mutation(a, b, c);
+                    Point Pi = population[i];
+                    Point e = crossover(d, Pi);
+                    double fi = Pi.getValue();
+                    double fe = e.getValue();
+                    if (fi < fe) {
+                        nextPopulation[i] = Pi;
+                    } else {
+                        nextPopulation[i] = e;
+                    }
                 }
+                Point[] tmp = population;
+                population = nextPopulation;
+                nextPopulation = tmp;
             }
-            Point[] tmp = population;
-            population = nextPopulation;
-            nextPopulation = tmp;
-        } while (tester.hasTries());
+        }
     }
 
     Random indexRnd = new Random();
@@ -126,6 +124,7 @@ public class Minima {
     }
 
     final Random parentChooser = new Random();
+
     private Point crossover(Point p1, Point p2) {
         Point res = new Point(N);
         int crossoverIndex = chooserRnd.nextInt(N);
@@ -160,8 +159,8 @@ public class Minima {
         tester = new Tester(this.debug, maxTries);
     }
 
-    private void populate() {
-        for (int i = 0; i < populationSize; ++i) {
+    private void populate(Point[] population) {
+        for (int i = 0; i < population.length; ++i) {
             population[i] = randomPoint();
         }
     }
