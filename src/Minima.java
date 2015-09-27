@@ -7,7 +7,13 @@ import java.util.*;
 
 public class Minima {
 
+    private static final double alpha = 0.5;
+    private final int populationSize = 30;
     private final boolean debug;
+
+    public static void main(String[] args) {
+        new Minima(false).run();
+    }
 
     private Minima() {
         debug = false;
@@ -42,42 +48,43 @@ public class Minima {
         }
     }
 
-    private final int populationSize = 100;
-    private ArrayList<Point> population;
+    private Point[] population;
 
     private void solve() {
         init();
-        Point best = null;
+//        Point best = null;
         populate();
+        Point[] nextPopulation = new Point[populationSize];
         do {
-            ArrayList<Point> nextPopulation = new ArrayList<>(populationSize);
             for (int i = 0; i < populationSize; ++i) {
                 int ia = randomNot(populationSize, i, -1, -1);
                 int ib = randomNot(populationSize, i, ia, -1);
                 int ic = randomNot(populationSize, i, ia, ib);
-                Point a = population.get(ia);
-                Point b = population.get(ib);
-                Point c = population.get(ic);
+                Point a = population[ia];
+                Point b = population[ib];
+                Point c = population[ic];
                 Point d = mutation(a, b, c);
-                Point Pi = population.get(i);
+                Point Pi = population[i];
                 Point e = crossover(d, Pi);
                 double fi = Pi.getValue();
                 double fe = e.getValue();
                 if (fi < fe) {
-                    nextPopulation.add(Pi);
+                    nextPopulation[i] = Pi;
                 } else {
-                    nextPopulation.add(e);
+                    nextPopulation[i] = e;
                 }
             }
+            Point[] tmp = population;
             population = nextPopulation;
-            if (best == null) {
-                best = population.get(0);
-            }
-            for (Point p : population) {
-                if (p.getValue() < best.getValue()) {
-                    best = p;
-                }
-            }
+            nextPopulation = tmp;
+//            if (best == null) {
+//                best = population.get(0);
+//            }
+//            for (Point p : population) {
+//                if (p.getValue() < best.getValue()) {
+//                    best = p;
+//                }
+//            }
         } while (tester.hasTries());
     }
 
@@ -94,7 +101,6 @@ public class Minima {
     private final double MAX_VAL = 10.0;
     private final double MIN_VAL = -MAX_VAL;
 
-    private static final double alpha = 0.75;
 
     private Point mutation(Point a, Point b, Point c) {
         Point res = new Point(N);
@@ -150,9 +156,9 @@ public class Minima {
     }
 
     private void populate() {
-        population = new ArrayList<>(populationSize);
+        population = new Point[populationSize];
         for (int i = 0; i < populationSize; ++i) {
-            population.add(randomPoint());
+            population[i] = randomPoint();
         }
     }
 
@@ -233,48 +239,48 @@ public class Minima {
         private boolean debugOutput = false;
 
         private double ask(Point p) {
-            triesLeft -= 1;
-            if (debug) {
-                double realValue = realFunction(p);
-                if (debugOutput) {
-                    System.err.print("x = ");
-                    for (double xi : p.x) {
-                        System.err.print(xi);
-                        System.err.print(' ');
-                    }
-                    System.err.print("F = ");
-                    System.err.println(realValue);
-                }
-                if (triesLeft % 100 == 0) {
-                    System.err.print("F = ");
-                    System.err.println(realValue);
-                    System.err.print("tries left : ");
-                    System.err.println(triesLeft);
-                }
-                if (Math.abs(realValue - 1.0) < DEBUG_EPS) {
-                    System.err.print("F = ");
-                    System.err.println(realValue);
-                    System.err.print("Tries left : ");
-                    System.err.println(triesLeft);
-                    System.err.println("BINGO");
-                    System.exit(42);
-                }
-                return realValue + noise();
-            } else {
-                for (double xi : p.x) {
-                    System.out.print(xi);
-                    System.out.print(' ');
-                }
-                System.out.println();
-                String answer = in.next();
-                if (answer.equals("Bingo")) {
-                    this.bingo = true;
-                    System.exit(0);
-                    return -42 * 239;
-                } else {
-                    return Double.parseDouble(answer);
-                }
+//            triesLeft -= 1;
+//            if (debug) {
+//                double realValue = realFunction(p);
+//                if (debugOutput) {
+//                    System.err.print("x = ");
+//                    for (double xi : p.x) {
+//                        System.err.print(xi);
+//                        System.err.print(' ');
+//                    }
+//                    System.err.print("F = ");
+//                    System.err.println(realValue);
+//                }
+//                if (triesLeft % 100 == 0) {
+//                    System.err.print("F = ");
+//                    System.err.println(realValue);
+//                    System.err.print("tries left : ");
+//                    System.err.println(triesLeft);
+//                }
+//                if (Math.abs(realValue - 1.0) < DEBUG_EPS) {
+//                    System.err.print("F = ");
+//                    System.err.println(realValue);
+//                    System.err.print("Tries left : ");
+//                    System.err.println(triesLeft);
+//                    System.err.println("BINGO");
+//                    System.exit(42);
+//                }
+//                return realValue + noise();
+//            } else {
+            for (double xi : p.x) {
+                System.out.print(xi);
+                System.out.print(' ');
             }
+            System.out.println();
+            String answer = in.next();
+            if (answer.equals("Bingo")) {
+                this.bingo = true;
+                System.exit(0);
+                return -42 * 239;
+            } else {
+                return Double.parseDouble(answer);
+            }
+//            }
         }
 
         public boolean hasTries() {
@@ -290,10 +296,6 @@ public class Minima {
 
 //        in.close();
 //        out.close();
-    }
-
-    public static void main(String[] args) {
-        new Minima(false).run();
     }
 
     private BufferedReader br;
