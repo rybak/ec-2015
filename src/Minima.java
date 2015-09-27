@@ -9,6 +9,7 @@ public class Minima {
 
     private static final double alpha = 0.5;
     private final int populationSize = 30;
+    private final int giveUp = 40;
     private final boolean debug;
 
     public static void main(String[] args) {
@@ -55,7 +56,7 @@ public class Minima {
         Point[] nextPopulation = new Point[populationSize];
         int iteration = 0;
         do {
-            if (iteration % 40 == 0) {
+            if (iteration % giveUp == 0) {
                 populate();
             }
             ++iteration;
@@ -123,13 +124,14 @@ public class Minima {
 
     private Point crossover(Point p1, Point p2) {
         Point res = new Point(N);
-        for (int i = 0; i < N; ++i) {
-            if (chooserRnd.nextBoolean()) {
-                res.x[i] = p1.x[i];
-            } else {
-                res.x[i] = p2.x[i];
-            }
+        int crossoverIndex = chooserRnd.nextInt(N);
+        if (chooserRnd.nextBoolean()) {
+            Point tmp = p1;
+            p1 = p2;
+            p2 = tmp;
         }
+        System.arraycopy(p1.x, 0, res.x, 0, crossoverIndex);
+        System.arraycopy(p2.x, crossoverIndex, res.x, crossoverIndex, N - crossoverIndex);
         return res;
     }
 
