@@ -8,7 +8,7 @@ import java.util.*;
 public class Minima {
 
     private static final double alpha = 0.5;
-    private final int populationSize = 30;
+    private int populationSize;
     private final int giveUp = 40;
     private final boolean debug;
 
@@ -22,6 +22,7 @@ public class Minima {
 
     public Minima(boolean debug) {
         this.debug = debug;
+        populationSize = 30;
     }
 
     private int N;
@@ -53,6 +54,8 @@ public class Minima {
 
     private void solve() {
         init();
+        populationSize = 3 * N + 4;
+        population = new Point[populationSize];
         Point[] nextPopulation = new Point[populationSize];
         int iteration = 0;
         do {
@@ -122,10 +125,11 @@ public class Minima {
         return res;
     }
 
+    final Random parentChooser = new Random();
     private Point crossover(Point p1, Point p2) {
         Point res = new Point(N);
         int crossoverIndex = chooserRnd.nextInt(N);
-        if (chooserRnd.nextBoolean()) {
+        if (parentChooser.nextBoolean()) {
             Point tmp = p1;
             p1 = p2;
             p2 = tmp;
@@ -157,7 +161,6 @@ public class Minima {
     }
 
     private void populate() {
-        population = new Point[populationSize];
         for (int i = 0; i < populationSize; ++i) {
             population[i] = randomPoint();
         }
