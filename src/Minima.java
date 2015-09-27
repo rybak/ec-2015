@@ -52,7 +52,6 @@ public class Minima {
 
     private void solve() {
         init();
-//        Point best = null;
         Point[] nextPopulation = new Point[populationSize];
         int iteration = 0;
         do {
@@ -81,14 +80,6 @@ public class Minima {
             Point[] tmp = population;
             population = nextPopulation;
             nextPopulation = tmp;
-//            if (best == null) {
-//                best = population.get(0);
-//            }
-//            for (Point p : population) {
-//                if (p.getValue() < best.getValue()) {
-//                    best = p;
-//                }
-//            }
         } while (tester.hasTries());
     }
 
@@ -187,7 +178,7 @@ public class Minima {
     }
 
     private class Tester {
-        private static final double DEBUG_EPS = 0.00000001;
+        private static final double DEBUG_EPS = 0.00001;
         final boolean debug;
         private int triesLeft;
 
@@ -247,48 +238,48 @@ public class Minima {
         private boolean debugOutput = false;
 
         private double ask(Point p) {
-//            triesLeft -= 1;
-//            if (debug) {
-//                double realValue = realFunction(p);
-//                if (debugOutput) {
-//                    System.err.print("x = ");
-//                    for (double xi : p.x) {
-//                        System.err.print(xi);
-//                        System.err.print(' ');
-//                    }
-//                    System.err.print("F = ");
-//                    System.err.println(realValue);
-//                }
-//                if (triesLeft % 100 == 0) {
-//                    System.err.print("F = ");
-//                    System.err.println(realValue);
-//                    System.err.print("tries left : ");
-//                    System.err.println(triesLeft);
-//                }
-//                if (Math.abs(realValue - 1.0) < DEBUG_EPS) {
-//                    System.err.print("F = ");
-//                    System.err.println(realValue);
-//                    System.err.print("Tries left : ");
-//                    System.err.println(triesLeft);
-//                    System.err.println("BINGO");
-//                    System.exit(42);
-//                }
-//                return realValue + noise();
-//            } else {
-            for (double xi : p.x) {
-                System.out.print(xi);
-                System.out.print(' ');
-            }
-            System.out.println();
-            String answer = in.next();
-            if (answer.equals("Bingo")) {
-                this.bingo = true;
-                System.exit(0);
-                return -42 * 239;
+            triesLeft -= 1;
+            if (debug) {
+                double realValue = realFunction(p);
+                if (debugOutput) {
+                    System.err.print("x = ");
+                    for (double xi : p.x) {
+                        System.err.print(xi);
+                        System.err.print(' ');
+                    }
+                    System.err.print("F = ");
+                    System.err.println(realValue);
+                }
+                if (triesLeft % 100 == 0) {
+                    System.err.print("F = ");
+                    System.err.println(realValue);
+                    System.err.print("tries left : ");
+                    System.err.println(triesLeft);
+                }
+                if (Math.abs(realValue - 1.0) < DEBUG_EPS) {
+                    System.err.print("F = ");
+                    System.err.println(realValue);
+                    System.err.print("Tries left : ");
+                    System.err.println(triesLeft);
+                    System.err.println("BINGO");
+                    System.exit(42);
+                }
+                return realValue + noise();
             } else {
-                return Double.parseDouble(answer);
+                for (double xi : p.x) {
+                    System.out.print(xi);
+                    System.out.print(' ');
+                }
+                System.out.println();
+                String answer = in.next();
+                if (answer.equals("Bingo")) {
+                    this.bingo = true;
+                    System.exit(0);
+                    return -42 * 239;
+                } else {
+                    return Double.parseDouble(answer);
+                }
             }
-//            }
         }
 
         public boolean hasTries() {
@@ -301,9 +292,6 @@ public class Minima {
         in = new MyScanner();
 
         solve();
-
-//        in.close();
-//        out.close();
     }
 
     private BufferedReader br;
@@ -327,29 +315,9 @@ public class Minima {
             }
         }
 
-        public char nextChar() {
-            return next().charAt(0);
-        }
-
         public int nextInt() {
             return Integer.parseInt(next());
         }
 
-        public long nextLong() {
-            return Long.parseLong(next());
-        }
-
-        public double nextDouble() {
-            return Double.parseDouble(next());
-        }
-
-        public void close() {
-            try {
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
-
 }
