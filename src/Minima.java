@@ -53,9 +53,13 @@ public class Minima {
     private void solve() {
         init();
 //        Point best = null;
-        populate();
         Point[] nextPopulation = new Point[populationSize];
+        int iteration = 0;
         do {
+            if (iteration % 40 == 0) {
+                populate();
+            }
+            ++iteration;
             for (int i = 0; i < populationSize; ++i) {
                 int ia = randomNot(populationSize, i, -1, -1);
                 int ib = randomNot(populationSize, i, ia, -1);
@@ -129,7 +133,11 @@ public class Minima {
     private Point crossover(Point p1, Point p2) {
         Point res = new Point(N);
         for (int i = 0; i < N; ++i) {
-            res.x[i] = randomInRange(p1.x[i], p2.x[i]);
+            if (chooserRnd.nextBoolean()) {
+                res.x[i] = p1.x[i];
+            } else {
+                res.x[i] = p2.x[i];
+            }
         }
         return res;
     }
