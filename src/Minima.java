@@ -8,7 +8,7 @@ import java.util.*;
 public class Minima {
 
     private static final double alpha = 0.5;
-    private static final int giveUpStart = 40;
+    private static final int giveUpStart = 100;
     private static final int giveUpInc = 5;
     private final boolean debug;
 
@@ -69,7 +69,7 @@ public class Minima {
                     Point c = population[ic];
                     Point d = mutation(a, b, c);
                     Point Pi = population[i];
-                    Point e = crossover(d, Pi);
+                    Point e = uniformCrossover(d, Pi);
                     double fi = Pi.getValue();
                     double fe = e.getValue();
                     if (fi < fe) {
@@ -125,7 +125,19 @@ public class Minima {
 
     final Random parentChooser = new Random();
 
-    private Point crossover(Point p1, Point p2) {
+    private Point uniformCrossover(Point p1, Point p2) {
+        Point res = new Point(N);
+        for (int i = 0; i < N; ++i) {
+            if (chooserRnd.nextBoolean()) {
+                res.x[i] = p1.x[i];
+            } else {
+                res.x[i] = p2.x[i];
+            }
+        }
+        return res;
+    }
+
+    private Point onePointCrossover(Point p1, Point p2) {
         Point res = new Point(N);
         int crossoverIndex = chooserRnd.nextInt(N);
         if (parentChooser.nextBoolean()) {
